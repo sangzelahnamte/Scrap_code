@@ -1,19 +1,77 @@
 #include <QCoreApplication>
+#include <QSettings>
+
+// QSettings Methods
+void save_state(QSettings &setting);
+void info_state(QSettings &setting);
+void load_state(QSettings &setting);
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    // Set up code that uses the Qt event loop here.
-    // Call a.quit() or a.exit() to quit the application.
-    // A not very useful example would be including
-    // #include <QTimer>
-    // near the top of the file and calling
-    // QTimer::singleShot(5000, &a, &QCoreApplication::quit);
-    // which quits the application after 5 seconds.
+    // Set organisation credentials to save state changes
+    QCoreApplication::setApplicationName("Scarp book App");
+    QCoreApplication::setOrganizationName("Soft tech Co.");
+    QCoreApplication::setOrganizationDomain("Bigtech.com");
 
-    // If you do not need a running Qt event loop, remove the call
-    // to a.exec() or use the Non-Qt Plain C++ Application template.
+    QSettings My_settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+    qInfo() << "Saved setting info";
+    save_state(My_settings);
+    qInfo() << "Setting information";
+    info_state(My_settings);
+    qInfo() << "Load setting info";
+    load_state(My_settings);
 
     return a.exec();
 }
+
+// QSettings Methods
+void save_state(QSettings &setting)
+{
+    setting.setValue("Font changed", 40);
+    qInfo() << setting.status();
+    qInfo() << "Saved settings";
+}
+
+void info_state(QSettings &setting)
+{
+    qInfo() << "Application name: " << setting.applicationName();
+    qInfo() << "Organization name: " << setting.organizationName();
+    qInfo() << "File name: " << setting.fileName();
+    qInfo() << "Key: " << setting.allKeys();
+}
+
+void load_state(QSettings &setting)
+{
+    qInfo() << "Load: " << setting.value("Font changed").toString(); // key hmangin value a load ang
+    bool ok;
+    qInfo() << "Load to int: " << setting.value("Font changed").toInt(&ok);
+    if(!ok)
+    {
+        qInfo() << "Could not load data";
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
