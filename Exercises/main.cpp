@@ -16,11 +16,11 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationDomain("Bigtech.com");
 
     QSettings My_settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-    qInfo() << "Saved setting info";
+
     save_state(My_settings);
-    qInfo() << "Setting information";
-    info_state(My_settings);
-    qInfo() << "Load setting info";
+
+    //info_state(My_settings);
+
     load_state(My_settings);
 
     return a.exec();
@@ -29,9 +29,19 @@ int main(int argc, char *argv[])
 // QSettings Methods
 void save_state(QSettings &setting)
 {
-    setting.setValue("Font changed", 40);
-    qInfo() << setting.status();
-    qInfo() << "Saved settings";
+    setting.beginGroup("Audio"); // Audio settings group
+    setting.setValue("Volume", 70);
+    setting.setValue("Mute", false);
+    setting.setValue("Bass", 40);
+    setting.setValue("Mid", 50);
+    setting.setValue("Treble", 80);
+    setting.endGroup(); // exit group setting
+
+    setting.beginGroup("Project Template"); // template setting group
+    setting.setValue("Orientation", "Portrait");
+    setting.setValue("Paper size", "A4");
+    setting.setValue("Empty project", true);
+    setting.endGroup(); // exit template setting group
 }
 
 void info_state(QSettings &setting)
@@ -44,14 +54,19 @@ void info_state(QSettings &setting)
 
 void load_state(QSettings &setting)
 {
-    // string a convert a nih chhan chu a qdebug() console string angin kan hmuh kan duh vangin a ni.
-    qInfo() << "Load: " << setting.value("Font changed").toString(); // key hmangin value a load ang.
-    bool ok; // a key value kha a chhia em tih validate nan int a convert tur a ni, a chhan chu tu emaw in an lo khawih sual palh thei data file app setting
-    qInfo() << "Load to int: " << setting.value("Font changed").toInt(&ok); // key value hi pangai taka application in load theih nan validation hman ani
-    if(!ok)
-    {
-        qInfo() << "Could not load data";
-    }
+    setting.beginGroup("Audio");
+    qDebug() << "Volume: " << setting.value("Volume").toInt();
+    qDebug() << "Mute: " << setting.value("Mute").toBool();
+    qDebug() << "Bass: " << setting.value("Bass").toInt();
+    qDebug() << "Mid: " << setting.value("Mid").toInt();
+    qDebug() << "Treble: " << setting.value("Treble").toInt();
+    setting.endGroup();
+
+    setting.beginGroup("Project Template"); // template setting group
+    qDebug() << "Orientation: " << setting.value("Orientation").toString();
+    qDebug() << "Paper size: " << setting.value("Paper size").toString();
+    qDebug() << "Start empty project: " << setting.value("Empty project").toBool();
+    setting.endGroup(); // exit template setting group
 }
 
 
