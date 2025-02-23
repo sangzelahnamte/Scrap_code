@@ -14,7 +14,10 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("Soft tech Co.");
     QCoreApplication::setOrganizationDomain("Bigtech.com");
 
-    QSettings My_settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+    //QSettings My_settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+    QString file_name = a.applicationDirPath() + "/setting.ini";
+    qInfo() << file_name;
+    QSettings My_settings(file_name, QSettings::Format::IniFormat);
 
     QString group = "Audio";
     QString key_1 = "Volume";
