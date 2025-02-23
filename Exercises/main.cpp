@@ -48,21 +48,21 @@ void save_state(QSettings &setting, QString group, QString key, int num_value)
 int load_state(QSettings &setting, QString group, QString key)
 {
     setting.beginGroup(group);
-    if(!setting.contains(key))
+    if(!setting.contains(key)) // setting contain key or not
     {
         qWarning() << "Does not containe key:" << key << "in" << group;
         setting.endGroup();
         return 0;
     }
     bool ok;
-    int value = setting.value(key).toInt(&ok); // key value load
+    int value = setting.value(key).toInt(&ok); // if key value has correct data type and can be converted to int
     setting.endGroup();
     if(!ok)
     {
         qDebug() << "Could not convert to int";
         return 0;
     }
-    return value;
+    return value; // return the data
 }
 
 
