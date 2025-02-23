@@ -1,5 +1,6 @@
 #include <QCoreApplication>
 #include <QSettings>
+#include <QRandomGenerator>
 
 // QSettings Methods
 void save_state(QSettings &setting, QString group, QString key, int num_value); // LOAD
@@ -33,6 +34,29 @@ int main(int argc, char *argv[])
     qInfo() << "Bass:" << load_state(My_settings, group, key_2);
     qInfo() << "Mid:" << load_state(My_settings, group, key_3);
     qInfo() << "Treble:" << load_state(My_settings, group, key_4);
+
+    QString color_group = "Colour group"; // group
+    QStringList keys; // key
+    keys << "red" << "blue" << "green" << "yellow" << "purple";
+
+    foreach(QString mykeys, keys) // generating key values here
+    {
+        int key_value = QRandomGenerator::global()->bounded(500);
+        save_state(My_settings, color_group, mykeys, key_value);
+    }
+
+    My_settings.sync(); // immediately writes to disk
+
+    foreach(QString group, My_settings.childGroups()) // reading and navigating back all data
+    {
+        My_settings.beginGroup(group);
+        qInfo() << "group:" << color_group;
+        foreach(QString key, My_settings.childKeys())
+        {
+            qInfo() << "key:" << key << "key value:" << My_settings.value(key).toString();
+        }
+        My_settings.endGroup();
+    }
 
     return a.exec();
 }
