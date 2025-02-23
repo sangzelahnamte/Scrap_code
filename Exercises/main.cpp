@@ -2,71 +2,67 @@
 #include <QSettings>
 
 // QSettings Methods
-void save_state(QSettings &setting);
-void info_state(QSettings &setting);
-void load_state(QSettings &setting);
+void save_state(QSettings &setting, QString group, QString key, int num_value); // LOAD
+int load_state(QSettings &setting, QString group, QString key); // SAVE
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    // Set organisation credentials are needed to be stored as metaData for the application if not it might collide with other app settings.
     QCoreApplication::setApplicationName("Scarp book App");
     QCoreApplication::setOrganizationName("Soft tech Co.");
     QCoreApplication::setOrganizationDomain("Bigtech.com");
 
     QSettings My_settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
 
-    save_state(My_settings);
+    QString group = "Audio";
+    QString key_1 = "Volume";
+    int value_1 = 80;
+    QString key_2 = "Bass";
+    int value_2 = 40;
+    QString key_3 = "Mid";
+    int value_3 = 50;
+    QString key_4 = "Treble";
+    int value_4 = 80;
 
-    //info_state(My_settings);
-
-    load_state(My_settings);
+    save_state(My_settings, group, key_1, value_1);
+    save_state(My_settings, group, key_2, value_2);
+    save_state(My_settings, group, key_3, value_3);
+    save_state(My_settings, group, key_4, value_4);
+    qInfo() << "Volume:" << load_state(My_settings, group, key_1);
+    qInfo() << "Bass:" << load_state(My_settings, group, key_2);
+    qInfo() << "Mid:" << load_state(My_settings, group, key_3);
+    qInfo() << "Treble:" << load_state(My_settings, group, key_4);
 
     return a.exec();
 }
 
 // QSettings Methods
-void save_state(QSettings &setting)
+void save_state(QSettings &setting, QString group, QString key, int num_value)
 {
-    setting.beginGroup("Audio"); // Audio settings group
-    setting.setValue("Volume", 70);
-    setting.setValue("Mute", false);
-    setting.setValue("Bass", 40);
-    setting.setValue("Mid", 50);
-    setting.setValue("Treble", 80);
-    setting.endGroup(); // exit group setting
-
-    setting.beginGroup("Project Template"); // template setting group
-    setting.setValue("Orientation", "Portrait");
-    setting.setValue("Paper size", "A4");
-    setting.setValue("Empty project", true);
-    setting.endGroup(); // exit template setting group
-}
-
-void info_state(QSettings &setting)
-{
-    qInfo() << "Application name: " << setting.applicationName();
-    qInfo() << "Organization name: " << setting.organizationName();
-    qInfo() << "File name: " << setting.fileName();
-    qInfo() << "Key: " << setting.allKeys();
-}
-
-void load_state(QSettings &setting)
-{
-    setting.beginGroup("Audio");
-    qDebug() << "Volume: " << setting.value("Volume").toInt();
-    qDebug() << "Mute: " << setting.value("Mute").toBool();
-    qDebug() << "Bass: " << setting.value("Bass").toInt();
-    qDebug() << "Mid: " << setting.value("Mid").toInt();
-    qDebug() << "Treble: " << setting.value("Treble").toInt();
+    setting.beginGroup(group);
+    setting.setValue(key, num_value); // key value save
     setting.endGroup();
+}
 
-    setting.beginGroup("Project Template"); // template setting group
-    qDebug() << "Orientation: " << setting.value("Orientation").toString();
-    qDebug() << "Paper size: " << setting.value("Paper size").toString();
-    qDebug() << "Start empty project: " << setting.value("Empty project").toBool();
-    setting.endGroup(); // exit template setting group
+int load_state(QSettings &setting, QString group, QString key)
+{
+    setting.beginGroup(group);
+    if(!setting.contains(key))
+    {
+        qWarning() << "Does not containe key:" << key << "in" << group;
+        setting.endGroup();
+        return 0;
+    }
+    bool ok;
+    int value = setting.value(key).toInt(&ok); // key value load
+    setting.endGroup();
+    if(!ok)
+    {
+        qDebug() << "Could not convert to int";
+        return 0;
+    }
+    return value;
 }
 
 
